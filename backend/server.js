@@ -5,11 +5,17 @@ import clientRoutes from "./routes/routes_client.js";
 import orderRoutes from "./routes/routes_order.js";
 import orderItemRoutes from "./routes/routes_orderitem.js";
 import categoryRoutes from "./routes/routes_category.js";
+import authRoutes from "./routes/routes_auth.js";
 import cors from "cors";
 
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.FRONTEND_ORIGIN || "http://localhost:5173",
+    credentials: true,
+  }),
+);
 
 ///////
 mongoose.connect('mongodb://127.0.0.1:27017/books_db')
@@ -22,13 +28,14 @@ mongoose.connect('mongodb://127.0.0.1:27017/books_db')
 //////////
 
 app.use(express.json());
+app.use("/api/auth", authRoutes);
 app.use("/api/books", bookRoutes);
 app.use("/api/clients", clientRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/orderitems", orderItemRoutes);
 app.use("/api/categories", categoryRoutes);
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

@@ -1,11 +1,19 @@
-import express from 'express';
-import { ReturnOrders, ReturnOrderById, addOrder, DeleteOrder } from '../controllers/orderControllers.js';
+import express from "express";
+import {
+  ReturnOrders,
+  ReturnOrderById,
+  addOrder,
+  DeleteOrder,
+} from "../controllers/orderControllers.js";
+import { requireAuth, requireRole } from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.get('/', ReturnOrders);
-router.get('/:id', ReturnOrderById);
-router.post('/', addOrder); // Note: addOrder is usually camelCase in your controller
-router.delete('/:id', DeleteOrder);
+router.use(requireAuth);
+
+router.get("/", ReturnOrders);
+router.get("/:id", ReturnOrderById);
+router.post("/", requireRole("admin"), addOrder);
+router.delete("/:id", requireRole("admin"), DeleteOrder);
 
 export default router;

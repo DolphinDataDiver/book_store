@@ -1,11 +1,19 @@
-import express from 'express';
-import { ReturnClients, ReturnClientById, AddClient, DeleteClient } from '../controllers/clientControllers.js';
+import express from "express";
+import {
+  ReturnClients,
+  ReturnClientById,
+  AddClient,
+  DeleteClient,
+} from "../controllers/clientControllers.js";
+import { requireAuth, requireRole } from "../middleware/auth.js";
 
-const router = express.Router(); // Fix: Define the router
+const router = express.Router();
 
-router.get('/', ReturnClients);
-router.get('/:id', ReturnClientById);
-router.post('/', AddClient);
-router.delete('/:id', DeleteClient);
+router.use(requireAuth);
+
+router.get("/", ReturnClients);
+router.get("/:id", ReturnClientById);
+router.post("/", requireRole("admin"), AddClient);
+router.delete("/:id", requireRole("admin"), DeleteClient);
 
 export default router;
